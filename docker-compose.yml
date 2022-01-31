@@ -1,0 +1,31 @@
+version: '3.7'
+services:
+  backend:
+    image: dock-serv
+    ports:
+    - "5000:5000"
+    restart: always
+    networks:
+      - default
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=jisc_demo
+    volumes:
+      - ./pgdata:/var/lib/postgressql/data
+      - ./server/createdb.sql:/docker-entrypoint-initdb.d/createdb.sql
+
+  web:
+      image: dock-client
+      depends_on:
+        - db 
+      ports:
+        - "3000:3000"
